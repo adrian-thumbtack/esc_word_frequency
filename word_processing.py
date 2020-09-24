@@ -146,6 +146,23 @@ def print_freq(freq_list, num=0):
 		i += 1
 		if (i >= num): break
 
+def print_to_file(freq_list, file_name='frequencies.txt'):
+	'''
+	Write the frequencies to a file
+
+	Parameters:
+	freq_list - the frequency list to be written to file
+	file_name - file name to write the frequency list
+
+	Returns: nothing, file called file_name overwritten or created for method
+	'''
+	f = open(os.path.join(current_dir,file_name), 'w', encoding='utf-8')
+	for word, freq in freq_list.items():
+		f.write('%s: %d\n' % (word, freq))
+
+	f.close()
+
+
 def stem_words(wordlist):
 	'''Get the stems of all words in the given word list
 
@@ -162,3 +179,20 @@ def stem_words(wordlist):
 		ret.append(porter.stem(word))
 
 	return ret
+
+
+def sort_frequency(freq_list, reverse=True, alpha=False):
+	'''Sort frequency lists by alphabet or value
+
+	Parameters:
+	freq_list - dictionary to be sorted
+	reverse - True sorts the list descending, False ascending
+	alpha - True sorts by alphabetical order instead of numerical, False is numerical
+
+	Returns:
+	sorted dictionary of frequencies
+	'''
+	if alpha:
+		return {k:v for k,v in sorted(freq_list.items(), key=lambda item: item[0], reverse=reverse)}
+	else:
+		return {k:v for k,v in sorted(freq_list.items(), key=lambda item: item[1], reverse=reverse)}

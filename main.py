@@ -3,6 +3,7 @@ from config import *
 from word_processing import *
 
 final_freq = total_freq(years,sections,countries)
-final_freq = {k:v for k,v in sorted(final_freq.items(), key=lambda item: item[1], reverse=True)}
+#final_freq = sort_frequency(final_freq, reverse=False, alpha=True)
 
-print_freq(final_freq)
+print_to_file(sort_frequency(final_freq), 'sorted_frequencies.txt')
+print_to_file(sort_frequency(final_freq, reverse=False, alpha=True), 'alphabetical_frequencies.txt')
