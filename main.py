@@ -1,6 +1,7 @@
 import os
 from config import *
 from string import ascii_letters
+from nltk.stem import PorterStemmer
 
 current_dir = os.path.dirname(__file__)
 
@@ -64,12 +65,12 @@ def words(year,section,country):
 	Returns:
 	the words in the corresponding song section, as a list
 	'''
-	if section == 'title': pass #file format TBD
+	if section == 'titles': pass #file format TBD
 	else:
 		ret = []
-		with open(get_path(year,section,country),'r') as f:
+		with open(get_path(year,section,country),'r', encoding='utf-8') as f:
 			for line in f:
-				ret += line.strip().split(' ')
+				ret += line.strip().split()
 		return clean_words(ret)
 
 def list_to_freq(wordlist):
@@ -100,7 +101,8 @@ def word_freq(year,section,country):
 	Returns:
 	the word frequency list as a dictionary
 	'''
-	return list_to_freq(words(year,section,country))
+	wordlist = words(year, section, country)
+	return list_to_freq(stem_words(wordlist))
 
 def total_freq(year_list,section_list,country_list):
 	'''
@@ -125,7 +127,43 @@ def total_freq(year_list,section_list,country_list):
 						try: ret[key] += d[key]
 						except: ret[key] = d[key]
 				except: continue
-				
+
 	return ret
 
-print(total_freq(years,sections,countries))
+def print_freq(freq_list, num=0):
+	'''
+	Print word frequency lists in the format "word: number"
+
+	Parameters:
+	freq_list - the frequency list to be printed
+	'''
+	if num == 0:
+		num = len(freq_list)
+
+	i = 0
+	for word, freq in freq_list.items():
+		print('%s: %d' % (word, freq))
+		i += 1
+		if (i >= num): break
+
+def stem_words(wordlist):
+	'''Get the stems of all words in the given word list
+
+	Parameters:
+	wordlist - list of words to stem
+	option - 0 for porter stem, 1 for lancaster stem, no stem by default
+
+	Returns:
+	the list of stems as a list
+	'''
+	ret = []
+	porter = PorterStemmer()
+	for word in wordlist:
+		ret.append(porter.stem(word))
+
+	return ret
+
+final_freq = total_freq(years,sections,countries)
+final_freq = {k:v for k,v in sorted(final_freq.items(), key=lambda item: item[1], reverse=True)}
+
+print_freq(final_freq)
