@@ -118,10 +118,14 @@ def total_freq(year_list,section_list,country_list):
 	for year in year_list:
 		for section in section_list:
 			for country in country_list:
-				d = word_freq(year,section,country)
-				for key in d:
-					try: ret[key] += d[key]
-					except: ret[key] = d[key]
+
+				try:
+					d = word_freq(year,section,country)
+					for key in d:
+						try: ret[key] += d[key]
+						except: ret[key] = d[key]
+				except: continue
+				
 	return ret
 
 print(total_freq(years,sections,countries))
